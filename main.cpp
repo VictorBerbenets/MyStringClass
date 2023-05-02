@@ -6,16 +6,11 @@ int main() {
     using std::cout;
     using std::endl;
 
-    String str = ("heyy ");
-    cout << str.GetSize() << endl;
+    String str =  ("f");
+    String str2 = ("fs");
 
-    str += "meeow";
-    str.Print();
-    cout << str.GetSize() << endl;
-
-    int x = 6;
-    int y = 7;
-
-  
+    cout << (str < str2) << endl;
+    
+      
     return 0;
 }

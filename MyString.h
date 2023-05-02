@@ -7,7 +7,6 @@
 
 class String {
 private:
-
     char* string;
     size_t size;
 public:
@@ -53,7 +52,7 @@ public:
 
 //----------------------------------Ariphmetic operations----------------------------------//
 
-    ///*********************************Concatenation**************************************//
+    ///(1) Concatenation:
     String operator +(const String & other) {
 
         String result;
@@ -114,7 +113,7 @@ public:
         return *this;
     }
 
-    ///*********************************Copying**************************************//
+    ///(2)Copying:
     String & operator = (String copy) {
         std::cout << "Called operator (=)" << this << std::endl;
 
@@ -127,6 +126,59 @@ public:
         std::swap(string, copy.string);
     }
 
+    ///(3)Comparison:
+    bool operator == (const String & tocomp) {
+        if (size != tocomp.size) {
+            return false;
+        }
+
+        for (size_t ch_position = 0; ch_position < size; ch_position++) {
+            if (string[ch_position] != tocomp.string[ch_position]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool operator != (const String & tocomp) {
+        if (size != tocomp.size) {
+            return true;
+        }
+
+        for (size_t ch_position = 0; ch_position < size; ch_position++) {
+            if (string[ch_position] != tocomp.string[ch_position]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool operator < (const String & tocomp) {
+        size_t compare_size = 0;
+
+        if (!size || !tocomp.size) {
+            if (!tocomp.size) {
+                return false;
+            }
+            return true;
+        }
+        else if (size < tocomp.size) {
+            compare_size = size;
+        } else {
+            compare_size = tocomp.size;
+        }
+        std::cout << "commp = " << compare_size << std::endl;
+
+        for (size_t ch_position = 0; ch_position < compare_size; ch_position++) {
+            if (string[ch_position] < tocomp.string[ch_position]) {
+                return true;
+            }
+            else if (string[ch_position] > tocomp.string[ch_position]) {
+                return false;
+            }
+        }
+        return false;
+    }
 
 //--------------------------------------------------------------------------------------------//
 
