@@ -7,10 +7,15 @@ int main() {
     using std::endl;
 
     String str =  ("f");
-    String str2 = ("fs");
-
-    cout << (str < str2) << endl;
+    String str2 = ("");
+    String str3('A', 10);
     
-      
+    str = str + str2 + str3;
+    str.Print();
+    
+
+    str.Resize(0, 'c');
+    str.Print();
+
     return 0;
 }

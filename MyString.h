@@ -6,12 +6,14 @@
 ///$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$///
 
 class String {
+//---------------------------------------------------------------------------------------//
 private:
     char* string;
     size_t size;
 public:
-
+//---------------------------------------------------------------------------------------//
     String() {
+
         std::cout << "Called 'empty' constructor: " << this << std::endl;
 
         string = nullptr;
@@ -19,6 +21,7 @@ public:
     }
 
     String(char symb, size_t size) {
+
         std::cout << "Called 'char symb, size_t size' constructor: " << this << std::endl;
 
         this->size = size;
@@ -28,7 +31,8 @@ public:
         string[size] = '\0';
     }
 
-    String(const char* string) {       
+    String(const char* string) {   
+
         std::cout << "Called 'const char* string' constructor: " << this << std::endl;
 
         size         = strlen(string);
@@ -40,6 +44,7 @@ public:
 
 
     String(const String & copy) {
+
         std::cout << "Called assignment operator: " << this << std::endl;
 
 
@@ -115,6 +120,7 @@ public:
 
     ///(2)Copying:
     String & operator = (String copy) {
+
         std::cout << "Called operator (=)" << this << std::endl;
 
         Swap(copy);
@@ -128,24 +134,27 @@ public:
 
     ///(3)Comparison:
     bool operator == (const String & tocomp) {
+        
         if (size != tocomp.size) {
             return false;
         }
 
-        for (size_t ch_position = 0; ch_position < size; ch_position++) {
+        for (size_t ch_position = 0; ch_position < size; ++ch_position) {
             if (string[ch_position] != tocomp.string[ch_position]) {
                 return false;
             }
         }
+
         return true;
     }
 
     bool operator != (const String & tocomp) {
+
         if (size != tocomp.size) {
             return true;
         }
 
-        for (size_t ch_position = 0; ch_position < size; ch_position++) {
+        for (size_t ch_position = 0; ch_position < size; ++ch_position) {
             if (string[ch_position] != tocomp.string[ch_position]) {
                 return true;
             }
@@ -154,22 +163,9 @@ public:
     }
 
     bool operator < (const String & tocomp) {
-        size_t compare_size = 0;
 
-        if (!size || !tocomp.size) {
-            if (!tocomp.size) {
-                return false;
-            }
-            return true;
-        }
-        else if (size < tocomp.size) {
-            compare_size = size;
-        } else {
-            compare_size = tocomp.size;
-        }
-        std::cout << "commp = " << compare_size << std::endl;
-
-        for (size_t ch_position = 0; ch_position < compare_size; ch_position++) {
+        size_t ch_position = 0;
+        for ( ; string[ch_position] && tocomp.string[ch_position]; ++ch_position) {
             if (string[ch_position] < tocomp.string[ch_position]) {
                 return true;
             }
@@ -177,20 +173,121 @@ public:
                 return false;
             }
         }
+
+        if(!string[ch_position]) {
+            if (tocomp.string[ch_position]) {
+                return true;
+            }
+            return false;
+        }
+
         return false;
     }
 
-//--------------------------------------------------------------------------------------------//
+    bool operator <= (const String & tocomp) {
 
-    void Print() {
-        std::cout << string << std::endl;
+        size_t ch_position = 0;
+        for ( ; string[ch_position] && tocomp.string[ch_position]; ++ch_position) {
+            if (string[ch_position] <= tocomp.string[ch_position]) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        if(!string[ch_position]) {
+            return true;
+        }
+
+        return false;
     }
 
+    bool operator > (const String & tocomp) {
+
+        size_t ch_position = 0;
+        for ( ; string[ch_position] && tocomp.string[ch_position]; ++ch_position) {
+            if (string[ch_position] > tocomp.string[ch_position]) {
+                return true;
+            }
+            else if (string[ch_position] < tocomp.string[ch_position]) {
+                return false;
+            }
+        }
+
+        if(!string[ch_position]) {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool operator >= (const String & tocomp) {
+
+        size_t ch_position = 0;
+        for ( ; string[ch_position] && tocomp.string[ch_position]; ++ch_position) {
+            if (string[ch_position] >= tocomp.string[ch_position]) {
+                return true;
+            }
+            return false;
+        }
+
+        if(!string[ch_position]) {
+            if (tocomp.string[ch_position]) {
+                return false;
+            }
+            return true;
+        }
+
+        return true;
+    }
+//--------------------------------------------------------------------------------------------//
+//---------------------------------------String manipulations---------------------------------//
+    
+    String& Resize(size_t new_size) {
+
+        String copy = *this;
+        delete [] string;
+
+        string = new char[new_size + 1];
+        size   = new_size;
+        
+        if (size <= copy.size) {
+            std::copy(copy.string, copy.string + size, string);
+            string[new_size] = '\0';
+
+        } else {
+            std::copy(copy.string, copy.string + copy.size, string);
+            string[copy.size] = '\0';
+
+        }
+
+        return *this;
+    }
+
+        String& Resize(size_t new_size, char symb) {
+
+        String copy = *this;
+        delete [] string;
+
+        string = new char[new_size + 1];
+        size   = new_size;
+        
+        if (size <= copy.size) {
+            std::copy(copy.string, copy.string + size, string);
+
+        } else {
+            std::copy(copy.string, copy.string + copy.size, string);
+            memset(string + copy.size, symb, sizeof(char) * (new_size - copy.size));
+        }
+        string[new_size] = '\0';
+
+        return *this;
+    }
 
     char& operator [] (int index) {
         if (index < 0 || index >= (int)size) {
             std::cout << "invalid index id: " << index << std::endl;
-            
         }
         return string[index];
     }
@@ -212,7 +309,7 @@ public:
     }
 
     void ToUpper() {
-        for (size_t ch_number = 0; ch_number < size; ch_number++) {
+        for (size_t ch_number = 0; ch_number < size; ++ch_number) {
             if (islower(string[ch_number])) {
                 string[ch_number] = toupper(string[ch_number]);
             }
@@ -220,7 +317,7 @@ public:
     }
 
     void ToLower() {
-        for (size_t ch_number = 0; ch_number < size; ch_number++) {
+        for (size_t ch_number = 0; ch_number < size; ++ch_number) {
             if (isupper(string[ch_number])) {
                 string[ch_number] = tolower(string[ch_number]);
             }
@@ -233,7 +330,7 @@ public:
             return 0;
         }
 
-        for (size_t ch_number = 0; ch_number < size; ch_number++) {
+        for (size_t ch_number = 0; ch_number < size; ++ch_number) {
             if (string[ch_number] != tocomp.string[ch_number]) {
                 return string[ch_number] - tocomp.string[ch_number];
             }
@@ -242,7 +339,11 @@ public:
         return 1;
     }
 
-    size_t GetSize() {
+    void Print() {
+        std::cout << string << std::endl;
+    }
+
+    size_t Size() {
         return size;
     }
 
@@ -253,3 +354,8 @@ public:
 };
 
 ///$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$///
+
+void PRINT() {
+
+    std::cout << "Hell" << std::endl;
+}
