@@ -389,28 +389,77 @@ public:
         return *this;
     }
 
-    //S.append(T, pos, count)
     ///Append (3)
-    // String & Append(const String & other, ) {
+    String & Append(const String & other, size_t pos, size_t count) {
 
-    //     if (!other.string || other.string[0] == '\0') {
-    //         std::cout << "\nString is empty :(\n" << std::endl;
-    //         return *this;
-    //     }
+        if (!other.string || other.string[0] == '\0') {
+            std::cout << "\nstring is empty :(\n" << std::endl;
+            return *this;
+        }
+   
+        if (pos > count) {
+            std::cout << "can't append symbs, invalid pos = " << pos << " and count = " << count << std::endl;
+            return *this;
+        }
+        if (pos >= other.size) {
+            std::cout << "invalid pos = " << pos << "; other.size = " << other.size << std::endl;
+            return *this;
+        }
 
-    //     String copy = *this;
-    //     delete [] string;
+        size_t appended_size = 0;
+        if (count >= other.size) {
+            appended_size = other.size - pos;
+            count = other.size;
+        } else {
+            appended_size = count - pos;
+        }
 
-    //     string = new char[size + other.size + 1];
+        String copy = *this;
+        delete [] string;
 
-    //     std::copy(copy.string, copy.string + size, string);
-    //     std::copy(other.string, other.string + other.size, string + size);
+        string = new char[size + appended_size + 1];
 
-    //     size += other.size;
-    //     string[size] = '\0';
+        std::copy(copy.string, copy.string + size, string);
+        std::copy(other.string + pos, other.string + count, string + size);
 
-    //     return *this;
-    // }
+        size += appended_size;
+        string[size] = '\0';
+
+        return *this;
+    }
+
+    ///Substr (1)
+    char* Substr(size_t pos, size_t count) {
+
+        if (pos > count) {
+            std::cout << "\ncan't append symbs, invalid pos = " << pos << " and count = " << count << std::endl;
+            return nullptr;
+        }
+        if (pos >= size) {
+            std::cout << "\ninvalid pos = " << pos << "; size = " << size << std::endl;
+            return nullptr;
+        }
+
+        char* ret_string   = nullptr;
+        size_t lim_to_copy = 0;
+        size_t string_size = 0;
+
+        if (count >= size) {
+            ret_string  = new char[size - pos + 1];
+            string_size = size - pos;
+            lim_to_copy = size; 
+        } else {
+            ret_string  = new char[count - pos + 1];
+            string_size = count - pos;
+            lim_to_copy = count;
+        }
+
+        std::copy(string + pos, string + lim_to_copy, ret_string);
+        ret_string[string_size] = '\0';
+
+        return ret_string;
+    }
+
 
     char& operator [] (int index) {
         if (index < 0 || index >= (int)size) {
@@ -427,7 +476,7 @@ public:
     bool Empty() {
         return size == 0 ? true:false;
     }
-    
+
     int Atoi() {
 
         if (size <= 0) {
