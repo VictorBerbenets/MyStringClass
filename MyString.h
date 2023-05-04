@@ -243,8 +243,8 @@ public:
     }
 //--------------------------------------------------------------------------------------------//
 //---------------------------------------String manipulations---------------------------------//
-    
-    String& Resize(size_t new_size) {
+    ///Resize (1)
+    void Resize(size_t new_size) {
 
         String copy = *this;
         delete [] string;
@@ -262,10 +262,10 @@ public:
 
         }
 
-        return *this;
     }
 
-        String& Resize(size_t new_size, char symb) {
+    ///Resize (2)
+    void Resize(size_t new_size, char symb) {
 
         String copy = *this;
         delete [] string;
@@ -282,8 +282,135 @@ public:
         }
         string[new_size] = '\0';
 
+    }
+
+    void PushBack(char symb) {
+
+        String copy = *this;
+        delete [] string;
+
+        ++size;
+        string = new char[size + 1];
+        std::copy(copy.string, copy.string + copy.size, string);
+        string[copy.size] = symb;
+        string[size]      = '\0';
+
+    }
+
+    String & Erase(size_t delete_id, size_t count) {
+
+        if (delete_id >= size) {
+            std::cout << "Can't do 'erase' method: index of erasing is out of range:" << delete_id << "\nsize = " << 
+            size << std::endl;
+            return *this;
+        }
+
+        size_t deleted_size = count - delete_id + 1;
+        size_t final_size   = size - deleted_size;
+
+        if (count >= size) { 
+            memset(string + delete_id, '\0', sizeof(char)*(size - delete_id));  
+            size = delete_id;
+        } else if (count < delete_id) {
+            std::cout << "invalid second operator: " << count << std::endl;
+        } else {
+            String copy = *this;
+            delete [] string;
+            string = new char[final_size + 1];
+
+            std::copy(copy.string, copy.string + delete_id, string);
+            std::copy(copy.string + (count + 1), copy.string + size, string + delete_id);
+
+            string[final_size] = '\0';
+            size = final_size;
+        }
+        
         return *this;
     }
+
+    ///Append (1)
+    String & Append(int count, char symb) {
+
+        String copy = *this;
+        delete [] string;
+
+        string = new char[size + count + 1];
+
+        std::copy(copy.string, copy.string + size, string);
+        memset(string + size, symb, sizeof(char)*count);
+
+        size += count;
+        string[size] = '\0';
+
+        return *this;
+    }
+
+    ///Append (2.1)
+    String & Append(const char* other) {
+
+        if (!other || other[0] == '\0') {
+            return *this;
+        }
+
+        String copy = *this;
+        delete [] string;
+
+        size_t other_len = strlen(other);
+        string = new char[size + other_len + 1];
+
+        std::copy(copy.string, copy.string + size, string);
+        std::copy(other, other + other_len, string + size);
+
+        size += other_len;
+        string[size] = '\0';
+
+        return *this;
+    }
+
+    ///Append (2.2)
+    String & Append(const String & other) {
+
+        if (!other.string || other.string[0] == '\0') {
+            std::cout << "\nString is empty :(\n" << std::endl;
+            return *this;
+        }
+
+        String copy = *this;
+        delete [] string;
+
+        string = new char[size + other.size + 1];
+
+        std::copy(copy.string, copy.string + size, string);
+        std::copy(other.string, other.string + other.size, string + size);
+
+        size += other.size;
+        string[size] = '\0';
+
+        return *this;
+    }
+
+    //S.append(T, pos, count)
+    ///Append (3)
+    // String & Append(const String & other, ) {
+
+    //     if (!other.string || other.string[0] == '\0') {
+    //         std::cout << "\nString is empty :(\n" << std::endl;
+    //         return *this;
+    //     }
+
+    //     String copy = *this;
+    //     delete [] string;
+
+    //     string = new char[size + other.size + 1];
+
+    //     std::copy(copy.string, copy.string + size, string);
+    //     std::copy(other.string, other.string + other.size, string + size);
+
+    //     size += other.size;
+    //     string[size] = '\0';
+
+    //     return *this;
+    // }
 
     char& operator [] (int index) {
         if (index < 0 || index >= (int)size) {
@@ -292,6 +419,15 @@ public:
         return string[index];
     }
 
+
+    void Clear() {
+        memset(string, '\0', sizeof(char) * size);
+    }
+
+    bool Empty() {
+        return size == 0 ? true:false;
+    }
+    
     int Atoi() {
 
         if (size <= 0) {
@@ -352,10 +488,4 @@ public:
         delete [] string;
     }
 };
-
 ///$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$///
-
-void PRINT() {
-
-    std::cout << "Hell" << std::endl;
-}
