@@ -7,22 +7,15 @@ int main() {
     using std::cout;
     using std::endl;
 
-    String str =  ("Hello big fella");
+    String str("Hello big fella");
     String str2 = ("Isogood");
-    // String str3('B', 10);
+    String str3(10, 'B');
 
-    // str = str + str2 + str3;
-    str.Print();
+    String stroka = str;
 
-    // str.Erase(2, 6);
-    str.Append(str2, 0, 7);
-    str.Print();
+    stroka = str + str2;
 
-    const char* string = str.C_str();
-
-    cout << "string = " << string << endl;
-    // delete [] string;
-    std::cout << str.Substr(str.Find("d", 1));
+    stroka.Print();
 
     return 0;
 }

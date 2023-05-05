@@ -8,71 +8,39 @@
 class String {
 //---------------------------------------------------------------------------------------//
 private:
-    char* string;
     size_t size;
+    char* string;
 public:
-//---------------------------------------------------------------------------------------//
-    String() {
+//-------------------------------------Constructos---------------------------------------//
+    String(): size(0), string(nullptr) {}
 
-        std::cout << "Called 'empty' constructor: " << this << std::endl;
-
-        string = nullptr;
-        size   = 0;
-    }
-
-    String(char symb, size_t size) {
-
-        std::cout << "Called 'char symb, size_t size' constructor: " << this << std::endl;
-
-        this->size = size;
-        string     = new char[size + 1];
-
+    //initializer list(1)
+    String(size_t size, char symb): size(size), string(new char[size + 1]) {
         memset(string, symb, sizeof(char)*size);
         string[size] = '\0';
     }
 
-    String(const char* string) {   
-
-        std::cout << "Called 'const char* string' constructor: " << this << std::endl;
-
-        size         = strlen(string);
-        this->string = new char[size + 1];
-
-        std::copy(string, string + size, this->string);
-        this->string[size] = '\0';
+    //delegating constructor
+    String(const char* string): String(strlen(string), '\0') {   
+        std::copy(string, string + strlen(string), this->string);
     }
 
+    //initializer list(2)
+    String(std::initializer_list<char> list) {
+        size   = list.size();
+        string = new char[size + 1];
 
-    String(const String & copy) {
-
-        std::cout << "Called assignment operator: " << this << std::endl;
-
-
-        string = new char[copy.size + 1];
-        size   = copy.size;
-
-        std::copy(copy.string, copy.string + size, string);
+        std::copy(list.begin(), list.end(), string);
         string[size] = '\0';
     }
 
+    String(const String & copy): String(copy.size, '\0') {
+        std::copy(copy.string, copy.string + copy.size, string);
+    }
 //----------------------------------Ariphmetic operations----------------------------------//
 
     ///(1) Concatenation:
-    String operator +(const String & other) {
-
-        String result;
-        result.size   = size + other.size;
-        result.string = new char[result.size + 1];
-
-        std::copy(string, string + size, result.string);
-        std::copy(other.string, other.string + other.size, result.string + size);
-
-        result.string[result.size] = '\0';
-
-        return result;
-    }
-
-    String operator +=(const String & other) {
+    String operator+=(const String & other) {
 
         String copy = *this;
         delete [] string;
@@ -88,21 +56,7 @@ public:
         return *this;
     }
 
-    String operator +(const char & symb) {
-
-        String result;
-        result.size   = size + 1;
-        result.string = new char[result.size + 1];
-
-        std::copy(string, string + size, result.string);
-
-        result.string[result.size - 1] = symb;
-        result.string[result.size ]    = '\0';
-
-        return result;
-    }
-
-    String operator +=(const char & symb) {
+    String operator+=(const char & symb) {
 
         String copy = *this;
         delete [] string;
@@ -118,8 +72,16 @@ public:
         return *this;
     }
 
+    friend String operator+(const String & left_object, const String & right_object);
+
+    String operator+(const char & symb) {
+        String result = *this;
+        result += symb;
+        return result;
+    }
+
     ///(2)Copying:
-    String & operator = (String copy) {
+    String & operator=(String copy) {
 
         std::cout << "Called operator (=)" << this << std::endl;
 
@@ -133,114 +95,14 @@ public:
     }
 
     ///(3)Comparison:
-    bool operator == (const String & tocomp) {
-        
-        if (size != tocomp.size) {
-            return false;
-        }
+    friend bool operator==(const String & left_object, const String & right_object);
+    friend bool operator!=(const String & left_object, const String & right_object);
 
-        for (size_t ch_position = 0; ch_position < size; ++ch_position) {
-            if (string[ch_position] != tocomp.string[ch_position]) {
-                return false;
-            }
-        }
+    friend bool operator<(const String & left_object, const String & right_object);
+    friend bool operator>(const String left_object, const String & right_object); 
 
-        return true;
-    }
-
-    bool operator != (const String & tocomp) {
-
-        if (size != tocomp.size) {
-            return true;
-        }
-
-        for (size_t ch_position = 0; ch_position < size; ++ch_position) {
-            if (string[ch_position] != tocomp.string[ch_position]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool operator < (const String & tocomp) {
-
-        size_t ch_position = 0;
-        for ( ; string[ch_position] && tocomp.string[ch_position]; ++ch_position) {
-            if (string[ch_position] < tocomp.string[ch_position]) {
-                return true;
-            }
-            else if (string[ch_position] > tocomp.string[ch_position]) {
-                return false;
-            }
-        }
-
-        if(!string[ch_position]) {
-            if (tocomp.string[ch_position]) {
-                return true;
-            }
-            return false;
-        }
-
-        return false;
-    }
-
-    bool operator <= (const String & tocomp) {
-
-        size_t ch_position = 0;
-        for ( ; string[ch_position] && tocomp.string[ch_position]; ++ch_position) {
-            if (string[ch_position] <= tocomp.string[ch_position]) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-        if(!string[ch_position]) {
-            return true;
-        }
-
-        return false;
-    }
-
-    bool operator > (const String & tocomp) {
-
-        size_t ch_position = 0;
-        for ( ; string[ch_position] && tocomp.string[ch_position]; ++ch_position) {
-            if (string[ch_position] > tocomp.string[ch_position]) {
-                return true;
-            }
-            else if (string[ch_position] < tocomp.string[ch_position]) {
-                return false;
-            }
-        }
-
-        if(!string[ch_position]) {
-            return false;
-        }
-
-        return true;
-    }
-
-    bool operator >= (const String & tocomp) {
-
-        size_t ch_position = 0;
-        for ( ; string[ch_position] && tocomp.string[ch_position]; ++ch_position) {
-            if (string[ch_position] >= tocomp.string[ch_position]) {
-                return true;
-            }
-            return false;
-        }
-
-        if(!string[ch_position]) {
-            if (tocomp.string[ch_position]) {
-                return false;
-            }
-            return true;
-        }
-
-        return true;
-    }
+    friend bool operator<=(const String left_object, const String & right_object);
+    friend bool operator>=(const String left_object, const String & right_object);
 //--------------------------------------------------------------------------------------------//
 //---------------------------------------String manipulations---------------------------------//
     ///Resize (1)
@@ -491,7 +353,6 @@ public:
                 size_t save_id1 = ch_id1; 
                 size_t ch_id2   = 0;
                 while(ch_id1 < size && ch_id2 < str_size && string[ch_id1] == str[ch_id2]) {
-                    std::cout << string[ch_id1] << " " << str[ch_id2] << std::endl;
                     ++ch_id1;
                     ++ch_id2;
                 }
@@ -507,6 +368,13 @@ public:
         return npos;
     }
 
+
+    const char& operator [] (int index) const {
+        if (index < 0 || index >= (int)size) {
+            std::cout << "invalid index id: " << index << std::endl;
+        }
+        return string[index];
+    }
 
     char& operator [] (int index) {
         if (index < 0 || index >= (int)size) {
@@ -579,6 +447,10 @@ public:
         return size;
     }
 
+    void SetSize(size_t size) {
+        this->size = size;
+    }
+
     const char* C_str() {
         return this->string;
     }
@@ -589,3 +461,93 @@ public:
     }
 };
 ///$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$///
+
+
+
+//------------------------------------------------Compare methods realization------------------------------------------------//
+
+String operator+(const String & left_object, const String & right_object) {
+
+    String result;
+    result.size   = left_object.size + right_object.size;
+    result.string = new char[result.size + 1];
+
+    std::copy(left_object.string, left_object.string + left_object.size, result.string);
+    std::copy(right_object.string, right_object.string + right_object.size, result.string + left_object.size);
+
+    result.string[result.size] = '\0';
+
+    return result;
+}
+
+bool operator==(const String & left_object, const String & right_object) {
+    if (left_object.size != right_object.size) {
+        return false;
+    }
+
+    for (size_t ch_position = 0; ch_position < left_object.size; ++ch_position) {
+        if (left_object.string[ch_position] != right_object.string[ch_position]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool operator!=(const String & left_object, const String & right_object) {
+    return !(left_object == right_object);
+}
+
+
+bool operator<(const String & left_object, const String & right_object) {
+
+    size_t ch_position = 0;
+    for ( ; left_object.string[ch_position] && right_object.string[ch_position]; ++ch_position) {
+        if (left_object.string[ch_position] < right_object.string[ch_position]) {
+            return true;
+        }
+        else if (left_object.string[ch_position] > right_object.string[ch_position]) {
+            return false;
+        }
+    }
+
+    if(!left_object.string[ch_position]) {
+        if (right_object.string[ch_position]) {
+            return true;
+        }
+        return false;
+    }
+
+    return false;
+}
+
+bool operator>(const String left_object, const String & right_object) {
+    return right_object < left_object;
+}
+
+bool operator<=(const String left_object, const String & right_object) {
+
+    size_t ch_position = 0;
+    for ( ; left_object.string[ch_position] && right_object.string[ch_position]; ++ch_position) {
+        if (left_object.string[ch_position] <= right_object.string[ch_position]) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    if(!left_object.string[ch_position]) {
+        return true;
+    }
+
+    return false;
+}
+
+
+bool operator>=(const String left_object, const String & right_object) {
+    return right_object <= left_object;
+}
+//----------------------------------------------------------------------------------------------------------------//
+
+
