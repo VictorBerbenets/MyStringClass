@@ -7,7 +7,7 @@ int main() {
     using std::cout;
     using std::endl;
 
-    String str =  ("Hello");
+    String str =  ("Hello big fella");
     String str2 = ("Isogood");
     // String str3('B', 10);
 
@@ -15,13 +15,14 @@ int main() {
     str.Print();
 
     // str.Erase(2, 6);
-    str.Append(str2, 1, 6);
+    str.Append(str2, 0, 7);
     str.Print();
 
-    char* string = str.Substr(0, 6);
+    const char* string = str.C_str();
 
     cout << "string = " << string << endl;
-    delete [] string;
+    // delete [] string;
+    std::cout << str.Substr(str.Find("d", 1));
 
     return 0;
 }

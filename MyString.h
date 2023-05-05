@@ -261,7 +261,6 @@ public:
             string[copy.size] = '\0';
 
         }
-
     }
 
     ///Resize (2)
@@ -460,6 +459,54 @@ public:
         return ret_string;
     }
 
+    ///Substr (2)
+    char* Substr(size_t pos) {
+
+        if (pos >= size) {
+            std::cout << "\ninvalid pos = " << pos << "; size = " << size << std::endl;
+            return nullptr;
+        }
+
+        char* ret_string = nullptr;
+        ret_string  = new char[size - pos + 1];
+
+        std::copy(string + pos, string + size, ret_string);
+        ret_string[size - pos] = '\0';
+
+        return ret_string;
+    }
+
+
+    size_t Find(const char* str, size_t pos = 0) {
+
+        size_t npos = -1;
+        if (!str) {
+            return npos;
+        }
+        
+        size_t str_size = strlen(str);
+
+        for (size_t ch_id1 = pos; ch_id1 < size; ++ch_id1) {
+            if (string[ch_id1] == str[0]) {
+                size_t save_id1 = ch_id1; 
+                size_t ch_id2   = 0;
+                while(ch_id1 < size && ch_id2 < str_size && string[ch_id1] == str[ch_id2]) {
+                    std::cout << string[ch_id1] << " " << str[ch_id2] << std::endl;
+                    ++ch_id1;
+                    ++ch_id2;
+                }
+                if (str[ch_id2] == '\0') {
+                    return save_id1;
+                } else {
+                    ch_id1 = save_id1;
+                }
+            } 
+            
+        }
+
+        return npos;
+    }
+
 
     char& operator [] (int index) {
         if (index < 0 || index >= (int)size) {
@@ -530,6 +577,10 @@ public:
 
     size_t Size() {
         return size;
+    }
+
+    const char* C_str() {
+        return this->string;
     }
 
     ~String() {
