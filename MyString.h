@@ -26,10 +26,7 @@ public:
     }
 
     //initializer list(2)
-    String(std::initializer_list<char> list) {
-        size   = list.size();
-        string = new char[size + 1];
-
+    String(std::initializer_list<char> list): size(list.size()), string(new char[size + 1]) {
         std::copy(list.begin(), list.end(), string);
         string[size] = '\0';
     }

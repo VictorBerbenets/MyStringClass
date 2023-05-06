@@ -11,8 +11,8 @@ int main() {
     String str2 = ("Isogood");
     String str3(10, 'B');
 
-    String stroka = str;
-
+    String stroka{'A', 'B', 'C'};
+    stroka.Print();
     stroka = str + str2;
 
     stroka.Print();
