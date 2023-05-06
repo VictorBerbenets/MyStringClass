@@ -40,7 +40,7 @@ public:
 //----------------------------------Ariphmetic operations----------------------------------//
 
     ///(1) Concatenation:
-    String operator+=(const String & other) {
+    String& operator+=(const String & other) {
 
         String copy = *this;
         delete [] string;
@@ -56,7 +56,7 @@ public:
         return *this;
     }
 
-    String operator+=(const char & symb) {
+    String& operator+=(const char & symb) {
 
         String copy = *this;
         delete [] string;
@@ -71,8 +71,6 @@ public:
 
         return *this;
     }
-
-    friend String operator+(const String & left_object, const String & right_object);
 
     String operator+(const char & symb) {
         String result = *this;
@@ -94,15 +92,6 @@ public:
         std::swap(string, copy.string);
     }
 
-    ///(3)Comparison:
-    friend bool operator==(const String & left_object, const String & right_object);
-    friend bool operator!=(const String & left_object, const String & right_object);
-
-    friend bool operator<(const String & left_object, const String & right_object);
-    friend bool operator>(const String left_object, const String & right_object); 
-
-    friend bool operator<=(const String left_object, const String & right_object);
-    friend bool operator>=(const String left_object, const String & right_object);
 //--------------------------------------------------------------------------------------------//
 //---------------------------------------String manipulations---------------------------------//
     ///Resize (1)
@@ -383,7 +372,6 @@ public:
         return string[index];
     }
 
-
     void Clear() {
         memset(string, '\0', sizeof(char) * size);
     }
@@ -443,13 +431,13 @@ public:
         std::cout << string << std::endl;
     }
 
-    size_t Size() {
+    size_t Size() const {
         return size;
     }
 
-    void SetSize(size_t size) {
-        this->size = size;
-    }
+
+    void SetSize(size_t size);
+    char GetChar(size_t elem_id) const;
 
     const char* C_str() {
         return this->string;
@@ -468,25 +456,18 @@ public:
 
 String operator+(const String & left_object, const String & right_object) {
 
-    String result;
-    result.size   = left_object.size + right_object.size;
-    result.string = new char[result.size + 1];
-
-    std::copy(left_object.string, left_object.string + left_object.size, result.string);
-    std::copy(right_object.string, right_object.string + right_object.size, result.string + left_object.size);
-
-    result.string[result.size] = '\0';
-
-    return result;
+    String result = left_object;
+    return result += right_object;
 }
 
 bool operator==(const String & left_object, const String & right_object) {
-    if (left_object.size != right_object.size) {
+    if (left_object.Size() != right_object.Size()) {
         return false;
     }
 
-    for (size_t ch_position = 0; ch_position < left_object.size; ++ch_position) {
-        if (left_object.string[ch_position] != right_object.string[ch_position]) {
+    size_t max_ch_position = left_object.Size();
+    for (size_t ch_position = 0; ch_position < max_ch_position; ++ch_position) {
+        if (left_object.GetChar(ch_position) != right_object.GetChar(ch_position)) {
             return false;
         }
     }
@@ -502,17 +483,17 @@ bool operator!=(const String & left_object, const String & right_object) {
 bool operator<(const String & left_object, const String & right_object) {
 
     size_t ch_position = 0;
-    for ( ; left_object.string[ch_position] && right_object.string[ch_position]; ++ch_position) {
-        if (left_object.string[ch_position] < right_object.string[ch_position]) {
+    for ( ; left_object.GetChar(ch_position) && right_object.GetChar(ch_position); ++ch_position) {
+        if (left_object.GetChar(ch_position) < right_object.GetChar(ch_position)) {
             return true;
         }
-        else if (left_object.string[ch_position] > right_object.string[ch_position]) {
+        else if (left_object.GetChar(ch_position) > right_object.GetChar(ch_position)) {
             return false;
         }
     }
 
-    if(!left_object.string[ch_position]) {
-        if (right_object.string[ch_position]) {
+    if(!left_object.GetChar(ch_position)) {
+        if (right_object.GetChar(ch_position)) {
             return true;
         }
         return false;
@@ -528,8 +509,8 @@ bool operator>(const String left_object, const String & right_object) {
 bool operator<=(const String left_object, const String & right_object) {
 
     size_t ch_position = 0;
-    for ( ; left_object.string[ch_position] && right_object.string[ch_position]; ++ch_position) {
-        if (left_object.string[ch_position] <= right_object.string[ch_position]) {
+    for ( ; left_object.GetChar(ch_position) && right_object.GetChar(ch_position); ++ch_position) {
+        if (left_object.GetChar(ch_position) <= right_object.GetChar(ch_position)) {
             return true;
         }
         else {
@@ -537,7 +518,7 @@ bool operator<=(const String left_object, const String & right_object) {
         }
     }
 
-    if(!left_object.string[ch_position]) {
+    if(!left_object.GetChar(ch_position)) {
         return true;
     }
 
@@ -550,4 +531,15 @@ bool operator>=(const String left_object, const String & right_object) {
 }
 //----------------------------------------------------------------------------------------------------------------//
 
+//-----------------------------------------Private methods--------------------------------------------------------//
+void String::SetSize(size_t size) {
+    this->size = size;
+}
 
+char String::GetChar(size_t elem_id) const {
+    if (elem_id >= size) {
+        std::cout << "invalid elem id: " << elem_id << "size = " << size << std::endl;
+    }
+    return string[elem_id];
+}
+//----------------------------------------------------------------------------------------------------------------//
